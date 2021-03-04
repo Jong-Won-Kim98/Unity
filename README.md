@@ -318,7 +318,7 @@ Gamemanager객체 만들기
 2. Gamemanager객체를 클릭한 후 Inspector창에서 각각의 기능에 해당하는 텍스트들을 설정해줍니다.
 3. 밑 그림처럼 모든 텍스트들이 재 기능을 할수 있는것을 확인할수 있습니다.
 
-<img src="finish.PNG" width=800 height=500>
+<img src="Finish.PNG" width=800 height=500>
 
 
 
