@@ -321,6 +321,41 @@ Gamemanager객체 만들기
 <img src="Finish.PNG" width=800 height=500>
 
 
+----
+----
+
+# Second_Game(Tile Map)
+
+* 이번 게임은 기존에 있던 오픈 소스의 이미지 파일들을 가져와 만들어 보았습니다.
+
+Step1.
+
+게임 Start_Line과 Dead_Line 만들기.
+
+시작 발판 만들기
+
+1. 가져온 오픈 소스에서 Platform_Long을 가져와 Hierarchy창으로 가져와 하나의 오브젝트로 만들었습니다.
+2. 추후 Dead Line을 만들어야 하기때문에 적당한 Position을 설정합니다.
+3. Platform_Long에 Box Collider 2D를 추가합니다.
+- Box Collider 2D는 다른 Collider요소가 있는 객체와 충돌이 일어나도록 하는 컴포넌트입니다.
+<img src="Long.PNG" width=800 height=200>
+
+Dead Line 만들기
+
+1. Dead Line의 기본 원리는 플레이어가 발판에 착지하지 못하고 땅에 떨어져서 충돌을 감지하면 죽는것을 기본 원리로 하였습니다.
+2. Hierarchy창에서 빈 오브젝트를 생성하여 태그르 Dead로 바꿔줍니다.
+3. 위치는 발판보다 낮지만 앞으로 더 밑에있는 발판을 만들수 있으므로 적당한 위치에 설정해줍니다.
+4. Box Collider 2D 컴포넌트를 추가합니다
+5. Box Collider 2D 컴포넌트속 Is Trigger을 체크하여 다른 오브젝트와의 충돌을 감지할수 있도록 설정합니다.
+6. Dead Line의 길이는 모든 맴의 길이와 동일해야 하므로 최대한 길게 설정해주고 나중에 길이가 부족할 경우 늘려줍니다.
+ <img src="Dead Line.PNG" width=800 height=200>
+
+Step2.
+
+Player 만들기.
+
+- 유니티 2D에서는 Single 스프라이트가 여러개가 모여 Multiple 스프라이트로 합쳐져 구현합니다, 즉 하나의 Multiple 스프라이트를 여러개의 Single 스프라이트로 잘라서 사용할수도 있습니다.
+
 
 
 
