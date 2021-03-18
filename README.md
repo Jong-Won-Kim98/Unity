@@ -380,6 +380,8 @@ Player 상세 설정.
   - 위 그림에서 Entry는 현재 상태가 진입하는 입구, Exit은 오브젝트 동작이 종료되는 출구, Any State는 현재상태에 상관없이 연결된 상태로 전이하게 허용하는 뜻입니다.
 
 
+Step4.
+
 Player 스크립트 설정.
 
 ```C#
@@ -469,7 +471,65 @@ public class PlayerController : MonoBehaviour
 
  - 해당 Player 스크립트는 위와 같으며 Hirerachy창에 있는 Player에 스크립트를 참조해 주고 해당 스크립트에 할당하는 오디오를 각각이 설정해 주면 Player 설정이 끝이 납니다.
 
+Step5.
 
+배경 설정하기
+
+ - 미리 받아둔 Sky로 배경화면을 설정합니다.
+ - Project창에 있는 Sky 스프라이트를 Hirerachy창으로 드래그하여 배경을 설정해줍니다.
+ - Main camera에서 게임 배경화면이랑 어울리도록 그외 배경색을 설정해 줍니다.
+ - 사진이 Player의 움직임에 따라 움직일수 있도록 스크립트를 추가해 줍니다.
+
+```C#
+using UnityEngine;
+
+// 게임 오브젝트를 계속 왼쪽으로 움직이는 스크립트
+public class ScrollingObject : MonoBehaviour {
+    public float speed = 10f; // 이동 속도
+
+    private void Update() {
+
+        transform.Translate(Vector3.left * speed * Time.deltaTime);
+        // 배경화면이 초당 speed의 속도로 왼쪽으로 평행이동
+    }
+}
+```
+
+이제 배경이 끊기지 않도록 스트립트를 Sky에 설정해 줍니다
+
+```C#
+using UnityEngine;
+
+// 왼쪽 끝으로 이동한 배경을 오른쪽 끝으로 재배치하는 스크립트
+public class BackgroundLoop : MonoBehaviour {
+    private float width; // 배경의 가로 길이
+
+    private void Awake() {
+        BoxCollider2D backgroundCollider = GetComponent<BoxCollider2D>();
+        width = backgroundCollider.size.x;
+        // BoxCollider2D 컴포넌트의 Size x값을 가로 길이로 사용합니다.
+    }
+
+    private void Update() {
+        // 현재 위치가 원점에서 왼쪽으로 width 이상 이동했을때 위치를 리셋
+        if(transform.position.x <= -width)
+        {
+            Reposition();
+        }
+    }
+
+    // 위치를 리셋하는 메서드
+    private void Reposition() {
+        Vector2 offset = new Vector2(width * 2f, 0);
+        transform.position = (Vector2)transform.position + offset;
+        // 현재 위치에서 오른쪽으로 가로 길이 *2 만큼 이동한다.
+    }
+}
+```
+
+스크립트를 Sky에 참조 해준 후, Sky오브젝트를 복사하여 위치를 첫 배경의 넓이만큼 오른쪽에 위치시킨 후 플레이해보면 배경이 끊기질 않는것을 볼 수 있습니다.
+
+ <img src="Background.PNG" width=900 height=300>
 
 
 
