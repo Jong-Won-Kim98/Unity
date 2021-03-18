@@ -354,8 +354,120 @@ Step2.
 
 Player 만들기.
 
+1. 첫 화면에서 보이는 Player의 스크립트를 slice해서 Hierarchy창에 추가한 합니다.
+2. Hierarchy창에 추가된 Player 오브젝트에 Rigidbody 컴포넌트를 추가하여 충돌을 감지합니다.
+3. Circle Collider 2D컴포넌트를 추가하여 Player가 벽 모서리에 착지했을때 부드럽게 타고 올라가도록 추가해 줍니다.
+4. Audio Source 컴포넌트를 추가하여 Player의 행동에 따라 배경 음악을 넣어줍니다.
+5. Slice시킨 Player들을 animation에서 모두 참조하여 Player의 움직임을 만들어 줍니다.
+6. animation창에서 Player의 움직임이 너무 빠른지 느린지를 생각하며 Samples를 조정해 줍니다. 
+7. 같은 방법으로 Jump와 Die의 움직임을 조정하여 설정합니다.
+
 - 유니티 2D에서는 Single 스프라이트가 여러개가 모여 Multiple 스프라이트로 합쳐져 구현합니다, 즉 하나의 Multiple 스프라이트를 여러개의 Single 스프라이트로 잘라서 사용할수도 있습니다.
 
+Step3.
+
+Player 상세 설정.
+
+ 1. Animator창은 해당 오브젝트의 Animation 컨트롤러의 상태도를 표시하는 창입니다.
+ 2. Animator창을 연 다음 Player의 Animation 컨트롤의 연관성을 설정해 줍니다.
+ 3. Animator설정은 연결할 Animation끼리 마우스로 드래그 해줍니다.
+ 4. 생성된 화살표를 클릭하면 해당 움직임을 하는 상태의 조건을 설정할 수 있습니다.
+ 5. Die는 Dead Line에 충돌이 있을 경우 죽기 때문에 Trigger로 설정해 줍니다.
+ 6. 이 게임에서 Player은 두번 점프할수 있으므로 Jump에 바닥에서 떨어져 있다는 상태를 표시하기 위해 Grounded에 False를 설정해줍니다.
+
+  <img src="Animator.PNG" width=900 height=300>
+
+  - 위 그림에서 Entry는 현재 상태가 진입하는 입구, Exit은 오브젝트 동작이 종료되는 출구, Any State는 현재상태에 상관없이 연결된 상태로 전이하게 허용하는 뜻입니다.
+
+
+Player 스크립트 설정.
+
+```C#
+using UnityEngine;
+
+// PlayerController는 플레이어 캐릭터로서 Player 게임 오브젝트를 제어한다.
+public class PlayerController : MonoBehaviour
+{
+    public AudioClip deathClip; // 사망시 재생할 오디오 클립
+    public float jumpForce = 700f; // 점프 힘
+
+    private int jumpCount = 0; // 누적 점프 횟수
+    private bool isGrounded = false; // 바닥에 닿았는지 나타냄
+    private bool isDead = false; // 사망 상태
+
+    private Rigidbody2D playerRigidbody; // 사용할 리지드바디 컴포넌트
+    private Animator animator; // 사용할 애니메이터 컴포넌트
+    private AudioSource playerAudio; // 사용할 오디오 소스 컴포넌트
+
+    private void Start()
+    {
+        // 초기화
+        playerRigidbody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        playerAudio = GetComponent<AudioSource>();
+    }
+
+    private void Update()
+    {
+        // 사용자 입력을 감지하고 점프하는 처리
+        if (isDead)
+        {
+            return;
+        }
+        if (Input.GetMouseButtonDown(0) && jumpCount < 2)
+        {
+            jumpCount++;
+            playerRigidbody.velocity = Vector2.zero;
+            playerRigidbody.AddForce(new Vector2(0, jumpForce));
+            playerAudio.Play();
+        }
+        else if (Input.GetMouseButtonUp(0) && playerRigidbody.velocity.y > 0)
+        {
+            playerRigidbody.velocity = playerRigidbody.velocity * 0.5f;
+        }
+        animator.SetBool("Grounded", isGrounded);
+    }
+
+    private void Die()
+    {
+        // 사망 처리
+        animator.SetTrigger("Die");
+
+        playerAudio.clip = deathClip;
+        playerAudio.Play();
+        playerRigidbody.velocity = Vector2.zero;
+        isDead = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // 트리거 콜라이더를 가진 장애물과의 충돌을 감지
+        if (other.tag == "Dead" && !isDead)
+        {
+            Die();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // 바닥에 닿았음을 감지하는 처리
+        if (collision.contacts[0].normal.y > 0.7f)
+        {
+            isGrounded = true;
+            jumpCount = 0;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        // 바닥에서 벗어났음을 감지하는 처리
+        isGrounded = false;
+    }
+}
+
+```
+
+ - 해당 Player 스크립트는 위와 같으며 Hirerachy창에 있는 Player에 스크립트를 참조해 주고 해당 스크립트에 할당하는 오디오를 각각이 설정해 주면 Player 설정이 끝이 납니다.
 
 
 
